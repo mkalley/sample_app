@@ -11,6 +11,8 @@ describe "User pages" do
       sign_in user
       visit users_path
     end
+    
+    describe "edit" do
 
     it { should have_title('All users') }
     it { should have_content('All users') }
@@ -68,7 +70,19 @@ describe "signup" do
         it { should have_title('Sign up') }
         it { should have_content('error') }
 
-
+  describe "forbidden attributes" do
+      let(:params) do
+        { user: { admin: true, password: user.password,
+                  password_confirmation: user.password } }
+      end
+      before do
+        sign_in user, no_capybara: true
+        patch user_path(user), params
+      end
+      specify { expect(user.reload).not_to be_admin }
+    end
+  end
+end
      end
     end
   end
